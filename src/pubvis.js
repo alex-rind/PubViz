@@ -22,7 +22,9 @@ PUBVIS = function () {
         $.get( filename, function( data ) {
 
             result = bib2json( data );
-        
+            //console.log(result);
+            result = parseStringYearToCurrentYear( result );
+            //console.log(result);
             display_data( result.json, prepare_errors( result.errors ).error_text ) ;
 
         }) .fail(function() {
@@ -61,9 +63,44 @@ PUBVIS = function () {
 
         };        
 
-        //console.dir( bigJson );
+        //changing all entryTags and entryTypes to lowercase (e.g. Author -> author) otherwise they will not be recognized by the programm
+        for(e = 0; e < bigJson.length; e++)
+        {
+                var entryTags = bigJson[e].entryTags;
+                var newEntryTags = {};
+                var keys = Object.keys(entryTags);
+                for(i = 0; i < keys.length; i++)
+                {
+                    var key = keys[i];
+                    newEntryTags[key.toLowerCase()] = entryTags[key];
+                }
+                bigJson[e].entryTags = newEntryTags;
+                bigJson[e].entryType = bigJson[e].entryType.toLowerCase();
+        }
+
         return { json: bigJson,
                  errors: errors }; 
+    }
+
+    //  if the year of an entry is a String (like in press or submitted) the value will be changed to the current year
+    var parseStringYearToCurrentYear = function( data )
+    {
+        var tmp_json = data.json;
+        var tmp_errors = data.errors;
+        var currYear = new Date().getFullYear().toString();
+
+        for(i = 0; i < tmp_json.length; i++)
+        {
+            var year = tmp_json[i]["entryTags"]["year"] ;
+
+            if(isNaN(year))
+            {
+                tmp_json[i]["entryTags"]["year"]  = currYear;
+            }
+        }
+
+        return { json: tmp_json,
+                 errors: tmp_errors };
     }
 
     //draw data
