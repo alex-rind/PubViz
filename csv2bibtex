@@ -133,6 +133,8 @@ function parse_csv(string,csv,sep,quote,escape,newline,trim, fields,pos,strtrim)
     } else if (csv[1] !~ /^[0-9]+$/) {
 #    } else if ((csv[1] !~ /^[0-9]+$/) || (csv[1] < 2006)) {
 #    } else if ((csv[1] !~ /^[0-9]+$/) || !(csv[0] == "InfoVis" || csv[0] == "VAST")) {
+#    } else if ((csv[1] !~ /^[0-9]+$/) || (csv[13] !~ /Groller, E/)) {
+#    } else if ((csv[1] !~ /^[0-9]+$/) || (csv[13] !~ /Keim, D/)) {
 	printf("skip line: %s \n", $0) > "/dev/stderr";
 #	print "skip line" | "cat >&2";
     } else {
@@ -152,10 +154,10 @@ function parse_csv(string,csv,sep,quote,escape,newline,trim, fields,pos,strtrim)
         gsub(";", " and ", csv[13]);
         printf "  author = {%s},\n", csv[13];
         if (length(csv[5]) > 0 && length(csv[6]) > 0) {
-#            printf "  pages = {%s--%s},\n", csv[5],csv[6];
+            printf "  pages = {%s--%s},\n", csv[5],csv[6];
         }
         printf "  keywords = {%s},\n", csv[15];
-#        printf "  abstract = {%s},\n", csv[9];
+        printf "  abstract = {%s},\n", csv[9];
         print "}";
 
     }
